@@ -1,0 +1,44 @@
+[tool.poetry]
+name = "connected-path-graph-clustering"
+version = "0.1"
+description = "Implementations of algorithms for connected k-center on path graphs."
+authors = ["Lukas Drexler <lukas.drexler@hhu.de>", "Julius Mann"]
+readme = "README.md"
+license = "LICENSE"
+packages = [
+    { include = "connected-path-graph-clustering" }
+]
+include = ["images"]
+
+[tool.poetry.dependencies]
+python = "^3.10"
+scikit-learn = "^1.6.1"
+numpy = "^1.26.4"
+
+
+[tool.poetry.group.dev.dependencies]
+black = {extras = ["jupyter"], version = "^24.4.2"}
+pre-commit = "^2.14.0"
+flake8 = "^7.0.0"
+mypy = "^1.10.0"
+tqdm = "^4.66.4"
+
+
+[tool.poetry.group.test.dependencies]
+pandas = "^2.2.2"
+
+[tool.poetry.build]
+script = "build_extension.py"
+generate-setup-file = true
+
+[build-system]
+requires = ["poetry-core", "setuptools"]
+build-backend = "poetry.core.masonry.api"
+
+[virtualenvs]
+create = true
+in-project = true
+
+[tool.isort]
+profile = "black"
+line_length = 88
