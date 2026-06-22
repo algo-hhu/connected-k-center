@@ -5,15 +5,22 @@ from setuptools.command.build_ext import build_ext
 from setuptools.errors import CompileError
 
 extension = Extension(
-    name="flspp._core",
+    name="connected_path_graph_clustering._core",
     sources=[
-        "flspp/_core.cpp",
-        "flspp/cpp/clustering_algorithm.cpp",
-        "flspp/cpp/clustering.cpp",
-        "flspp/cpp/makros.cpp",
-        "flspp/cpp/random_generator.cpp",
+        "connected_path_graph_clustering/_core.cpp",
+        "connected_path_graph_clustering/cpp/solver.cpp",
+        "connected_path_graph_clustering/cpp/clustering.cpp",
+        "connected_path_graph_clustering/cpp/geometry.cpp",
+        "connected_path_graph_clustering/cpp/graph_utils.cpp",
     ],
-    include_dirs=["flspp"],
+    # "cpp" is the include root so that #include "connected_k_center/<...>.hpp"
+    # resolves to cpp/connected_k_center/. Boost.Graph is expected on the
+    # default include path (e.g. /usr/include on Linux); add its location here
+    # if it lives elsewhere.
+    include_dirs=["connected_path_graph_clustering/cpp"],
+    # OpenMP parallelises the pairwise-distance and per-component computations.
+    extra_compile_args=["-fopenmp"],
+    extra_link_args=["-fopenmp"],
 )
 
 # Thank you https://github.com/dstein64/kmeans1d!
@@ -23,10 +30,10 @@ class BuildExt(build_ext):
     """A custom build extension for adding -stdlib arguments for clang++."""
 
     def build_extensions(self) -> None:
-        # '-std=c++11' is added to `extra_compile_args` so the code can compile
-        # with clang++. This works across compilers (ignored by MSVC).
+        # '-std=c++17' is required for the structured bindings / std::filesystem
+        # used by the algorithm. This works across compilers (ignored by MSVC).
         for extension in self.extensions:
-            extension.extra_compile_args.append("-std=c++11")
+            extension.extra_compile_args.append("-std=c++17")
 
         try:
             build_ext.build_extensions(self)

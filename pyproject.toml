@@ -6,7 +6,7 @@ authors = ["Lukas Drexler <lukas.drexler@hhu.de>", "Julius Mann"]
 readme = "README.md"
 license = "LICENSE"
 packages = [
-    { include = "connected-path-graph-clustering" }
+    { include = "connected_path_graph_clustering" }
 ]
 include = ["images"]
 
