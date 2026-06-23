@@ -94,7 +94,7 @@ extern "C"
 
 static struct PyModuleDef _coremodule = {
     PyModuleDef_HEAD_INIT,
-    "connected_path_graph_clustering._core",
+    "connected_k_center._core",
     NULL,
     -1,
     NULL,

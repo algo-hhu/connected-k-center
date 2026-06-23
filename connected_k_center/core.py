@@ -5,12 +5,12 @@ import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
 from sklearn.utils.validation import validate_data
 
-import connected_path_graph_clustering._core  # type: ignore
+import connected_k_center._core  # type: ignore
 
-_DLL = ctypes.cdll.LoadLibrary(connected_path_graph_clustering._core.__file__)
+_DLL = ctypes.cdll.LoadLibrary(connected_k_center._core.__file__)
 
 
-class ConnectedKCenter(ClusterMixin, BaseEstimator):
+class PathCKC(ClusterMixin, BaseEstimator):
     """Connected k-center clustering on path graphs.
 
     The algorithm performs a binary search over all pairwise distances and
@@ -33,7 +33,7 @@ class ConnectedKCenter(ClusterMixin, BaseEstimator):
         X: Sequence[Sequence[float]],
         y: Any = None,
         component_ids: Optional[Sequence[int]] = None,
-    ) -> "ConnectedKCenter":
+    ) -> "PathCKC":
         self._validate_params()
 
         _X = validate_data(

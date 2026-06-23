@@ -5,19 +5,19 @@ from setuptools.command.build_ext import build_ext
 from setuptools.errors import CompileError
 
 extension = Extension(
-    name="connected_path_graph_clustering._core",
+    name="connected_k_center._core",
     sources=[
-        "connected_path_graph_clustering/_core.cpp",
-        "connected_path_graph_clustering/cpp/solver.cpp",
-        "connected_path_graph_clustering/cpp/clustering.cpp",
-        "connected_path_graph_clustering/cpp/geometry.cpp",
-        "connected_path_graph_clustering/cpp/graph_utils.cpp",
+        "connected_k_center/_core.cpp",
+        "connected_k_center/cpp/solver.cpp",
+        "connected_k_center/cpp/clustering.cpp",
+        "connected_k_center/cpp/geometry.cpp",
+        "connected_k_center/cpp/graph_utils.cpp",
     ],
     # "cpp" is the include root so that #include "connected_k_center/<...>.hpp"
     # resolves to cpp/connected_k_center/. Boost.Graph is expected on the
     # default include path (e.g. /usr/include on Linux); add its location here
     # if it lives elsewhere.
-    include_dirs=["connected_path_graph_clustering/cpp"],
+    include_dirs=["connected_k_center/cpp"],
     # OpenMP parallelises the pairwise-distance and per-component computations.
     extra_compile_args=["-fopenmp"],
     extra_link_args=["-fopenmp"],

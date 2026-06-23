@@ -1,12 +1,12 @@
 [tool.poetry]
-name = "connected-path-graph-clustering"
+name = "connected-k-center"
 version = "0.1"
 description = "Implementations of algorithms for connected k-center on path graphs."
 authors = ["Lukas Drexler <lukas.drexler@hhu.de>", "Julius Mann"]
 readme = "README.md"
 license = "LICENSE"
 packages = [
-    { include = "connected_path_graph_clustering" }
+    { include = "connected_k_center" }
 ]
 include = ["images"]
 
