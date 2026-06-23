@@ -9,6 +9,12 @@ import connected_k_center._core  # type: ignore
 
 _DLL = ctypes.cdll.LoadLibrary(connected_k_center._core.__file__)
 
+_METRIC_CODES = {
+    "rmse": 0,
+    "euclidean": 1,
+    "manhattan": 2,
+}  # for passing metric parameter down to c++
+
 
 class PathCKC(ClusterMixin, BaseEstimator):
     """Connected k-center clustering on path graphs.
@@ -25,8 +31,9 @@ class PathCKC(ClusterMixin, BaseEstimator):
     ``score``.
     """
 
-    def __init__(self, n_clusters: int = 8):
+    def __init__(self, n_clusters: int = 8, metric: str = "rmse"):
         self.n_clusters = n_clusters
+        self.metric = metric
 
     def fit(
         self,
@@ -64,6 +71,7 @@ class PathCKC(ClusterMixin, BaseEstimator):
         c_n = ctypes.c_uint(n_samples)
         c_d = ctypes.c_uint(self.n_features_in_)
         c_k = ctypes.c_int(self.n_clusters)
+        c_metric = ctypes.c_int(_METRIC_CODES[self.metric])
 
         labels = np.empty(n_samples, dtype=np.int32, order="C")
         c_labels = labels.ctypes.data_as(ctypes.POINTER(ctypes.c_int))
@@ -75,6 +83,7 @@ class PathCKC(ClusterMixin, BaseEstimator):
             ctypes.c_uint,  # n_samples
             ctypes.c_uint,  # n_features_in_
             ctypes.c_int,  # n_clusters (k)
+            ctypes.c_int,  # metric
             ctypes.POINTER(ctypes.c_int),  # labels
             ctypes.POINTER(ctypes.c_int),  # num_centers
         ]
@@ -86,6 +95,7 @@ class PathCKC(ClusterMixin, BaseEstimator):
             c_n,
             c_d,
             c_k,
+            c_metric,
             c_labels,
             ctypes.byref(c_num_centers),
         )
@@ -118,6 +128,11 @@ class PathCKC(ClusterMixin, BaseEstimator):
             )
         if self.n_clusters < 1:
             raise ValueError(f"n_clusters must be >= 1, got {self.n_clusters}")
+
+        if self.metric not in _METRIC_CODES:
+            raise ValueError(
+                f"metric must be one of {sorted(_METRIC_CODES)}, got {self.metric!r}"
+            )
 
 
 def _validate_component_ids(
