@@ -1,6 +1,7 @@
 # Connected Path Graph Clustering
 
-This algorithm computes a clustering for the connected k-center problem (as described in [1]) on path graphs. 
+A library for algorithms for the connected k-center problem (as described in [1]).
+Currently, only an algorithm for path graphs is implemented
 
 
 ### References
