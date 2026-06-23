@@ -14,14 +14,14 @@ namespace ckc {
     //////////////////// Gesamtlogik ////////////////////
     ///////////////////////////////////////////////////*/
 
-    SolverResult connected_k_center(int k, const std::vector<Point>& points, const AdjacencyList& adj) {
+    SolverResult connected_k_center(int k, const std::vector<Point>& points, const AdjacencyList& adj, Metric metric) {
         SolverResult result;
         const int n = static_cast<int>(points.size());
         if (n == 0) return result;
 
         /// [Schritt 0] Paarweise Distanzen berechnen
         
-        std::vector<double> distances = get_all_distances(points);
+        std::vector<double> distances = get_all_distances(points, metric);
         
         /// [Schritt 1] Graph aufbauen und Pfade (ZHKs) extrahieren
         std::vector<std::vector<int>> paths = extract_paths(adj, n);
@@ -38,10 +38,10 @@ namespace ckc {
             bool possible = true;
             std::vector<ComponentResult> current_results;
 
-            #pragma omp parallel for schedule(dynamic) default(none) shared(n, points, paths, r, possible, total_clusters, current_results, std::cout)
+            #pragma omp parallel for schedule(dynamic) default(none) shared(n, points, paths, r, possible, total_clusters, current_results, std::cout, metric)
             for (const auto& path : paths) {
                 
-                auto M = get_memberships_for_path(path, points, r, n);
+                auto M = get_memberships_for_path(path, points, r, n, metric);
 
                 ComponentResult res = solve_dp_forward(path, M, points);
 

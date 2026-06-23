@@ -3,7 +3,12 @@
 #include <vector>
 #include <boost/graph/adjacency_list.hpp>
 
+
+
+
 namespace ckc {
+
+    enum class Metric { RMSE = 0, Euclidean = 1, Manhattan = 2 };
 
 /// Ein Punkt hat ID + mehrdimensionalen Koordinate
     struct Point {

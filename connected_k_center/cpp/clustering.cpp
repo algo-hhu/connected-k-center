@@ -15,7 +15,7 @@ static std::vector<int> intersect(const std::vector<int>& x, const std::vector<i
 }
 
 // Radius-Membership: M[i] = alle Zentren, die Punkt i mit Radius r *zusammenhängend* abdecken könnten
-std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& path, const std::vector<Point>& points, double r, int n) {
+std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& path, const std::vector<Point>& points, double r, int n, Metric metric) {
     std::vector<std::vector<int>> M(n);
     const int m = static_cast<int>(path.size());
 
@@ -25,7 +25,7 @@ std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& p
         // Nach links auf dem Pfad erweitern
         for (int i = center_idx; i >= 0; --i) {
             const int target_id = path[i];
-            if (dist(points[target_id], points[center_id]) <= r) {
+            if (dist(points[target_id], points[center_id], metric) <= r) {
                 M[target_id].push_back(center_id);
             } else {
                 break;
@@ -35,7 +35,7 @@ std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& p
         // Nach rechts auf dem Pfad erweitern
         for (int i = center_idx + 1; i < m; ++i) {
             const int target_id = path[i];
-            if (dist(points[target_id], points[center_id]) <= r) {
+            if (dist(points[target_id], points[center_id], metric) <= r) {
                 M[target_id].push_back(center_id);
             } else {
                 break;

@@ -56,13 +56,14 @@ extern "C"
                          uint n,                 // number of points
                          uint d,                 // number of features
                          int k,                  // cluster budget (result uses at most k)
+                         int metric,             // distance metric used by the algortihm (0 for RSME, 1 for Euclidean, 2 for Manhattan)
                          int *out_labels,        // length n, filled with the assigned center id per point
                          int *out_num_centers)   // scalar, filled with the total number of centers used
     {
         std::vector<ckc::Point> points = array_to_points(coords, n, d);
         ckc::AdjacencyList adj = component_ids_to_adjacency(component_ids, n);
 
-        ckc::SolverResult result = ckc::connected_k_center(k, points, adj);
+        ckc::SolverResult result = ckc::connected_k_center(k, points, adj, static_cast<ckc::Metric>(metric));
 
         // optimal_radius < 0 signals that no feasible clustering was found.
         if (result.optimal_radius < 0.0)

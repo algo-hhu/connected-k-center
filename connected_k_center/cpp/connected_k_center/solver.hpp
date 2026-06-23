@@ -23,7 +23,7 @@ namespace ckc {
  * @param adj     Adjazenzliste (~> Graphstruktur).
  * @return        SolverResult mit optimalem Radius und Komponentenergebnissen.
  */
-    SolverResult connected_k_center(int k, const std::vector<Point>& points, const AdjacencyList& adj);
+    SolverResult connected_k_center(int k, const std::vector<Point>& points, const AdjacencyList& adj, Metric metric = Metric::RMSE);
 
 /**
  * Gibt das Ergebnis formatiert auf >>stdout<< aus.

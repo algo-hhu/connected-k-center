@@ -21,7 +21,8 @@ namespace ckc {
             const std::vector<int>& path,
             const std::vector<Point>& points,
             double r,
-            int n
+            int n,
+            Metric metric
     );
 
 /**
