@@ -56,7 +56,7 @@ extern "C"
                          uint n,                 // number of points
                          uint d,                 // number of features
                          int k,                  // cluster budget (result uses at most k)
-                         int metric,             // distance metric used by the algortihm (0 for RSME, 1 for Euclidean, 2 for Manhattan)
+                         int metric,             // distance metric used by the algorithm (0 for RMSE, 1 for Euclidean, 2 for Manhattan)
                          int *out_labels,        // length n, filled with the assigned center id per point
                          int *out_num_centers)   // scalar, filled with the total number of centers used
     {

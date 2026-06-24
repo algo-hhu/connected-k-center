@@ -6,20 +6,21 @@
 namespace ckc {
 
 /**
- * Berechnet den Abstand zwischen zwei Punkten.
- * (z.B. Root Mean Squared Error über alle Koordinatendimensionen)
+ * Computes the distance between two points.
+ * (e.g. root mean squared error over all coordinate dimensions)
  *
- * @return Distanz, oder 0.0 falls ein Punkt keine Koordinaten hat.
+ * @return Distance, or 0.0 if a point has no coordinates.
  */
     double dist(const Point& a, const Point& b, Metric metric);
 
 /**
- * Berechnet alle paarweisen Distanzen zwischen den gegebenen Punkten.
- * Das Ergebnis ist sortiert und dedupliziert.
- * Die Berechnung wird (optional) parallelisiert (OpenMP).
+ * Computes all pairwise distances between the given points.
+ * The result is sorted and deduplicated.
+ * The computation is (optionally) parallelized (OpenMP).
  *
- * @param points  Menge der Eingabepunkte.
- * @return        Sortierter, deduplizierter Vektor aller paarweisen Distanzen.
+ * @param points  Set of input points.
+ * @param metric  Distance metric to use.
+ * @return        Sorted, deduplicated vector of all pairwise distances.
  */
     std::vector<double> get_all_distances(const std::vector<Point>& points, Metric metric);
 

@@ -6,14 +6,14 @@
 namespace ckc {
 
 /**
- * Ermittelt alle Zusammenhangskomponenten (Sub-Pfade) aus der Adjazenzliste.
+ * Determines all connected components (sub-paths) from the adjacency list.
  *
- * Jede Komponente wird als geordneter Pfad (Vektor von Punkt-IDs) zurückgegeben,
- * beginnend bei einem Endknoten (Grad 0 oder 1).
+ * Each component is returned as an ordered path (vector of point IDs),
+ * starting at an endpoint (degree 0 or 1).
  *
- * @param adj  Adjazenzliste des Graphen.
- * @param n    Anzahl der Knoten.
- * @return     Vektor von Pfaden; jeder Pfad ist ein Vektor von Punkt-IDs.
+ * @param adj  Adjacency list of the graph.
+ * @param n    Number of nodes.
+ * @return     Vector of paths; each path is a vector of point IDs.
  */
     std::vector<std::vector<int>> extract_paths(const AdjacencyList& adj, int n);
 

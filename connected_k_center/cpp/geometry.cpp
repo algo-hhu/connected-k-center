@@ -5,7 +5,7 @@
 
 namespace ckc {
 
-// Distanzfunktion (RSME)
+// Distance function
 double dist(const Point& a, const Point& b, Metric metric) {
     const int d = static_cast<int>(a.coords.size());
     if (d == 0) return 0.0;
@@ -14,21 +14,21 @@ double dist(const Point& a, const Point& b, Metric metric) {
 
     switch(metric) {
         case Metric::RMSE:  //sqrt(mean of squares)
-            for (int i = 0; i < d; ++i) 
+            for (int i = 0; i < d; ++i)
             {
                 double diff = a.coords[i] - b.coords[i];
                 sum += diff * diff;
             }
             return std::sqrt(sum / d);
-        
+
         case Metric::Euclidean:    //standard Euclidean distance
             for (int i = 0; i < d; ++i)
              {
                 double diff = a.coords[i] - b.coords[i];
-                sum += diff * diff;    
+                sum += diff * diff;
              }
              return std::sqrt(sum);
-        
+
         case Metric::Manhattan: //Manhattan aka l_1 metric
             for (int i = 0; i < d; ++i)
             {
@@ -37,21 +37,21 @@ double dist(const Point& a, const Point& b, Metric metric) {
             return sum;
     }
     return 0.0;
-    
+
 }
 
 
-// Sortierte Liste aller verschiedenen paarweisen Distanzen berechnen
+// Compute the sorted list of all distinct pairwise distances
 std::vector<double> get_all_distances(const std::vector<Point>& points, Metric metric) {
     const int n = static_cast<int>(points.size());
     if (n < 2) return {0.0};
 
-    // Vorab allokieren (notwendig für parallele Schreibzugriffe)
+    // Pre-allocate (required for parallel writes)
     const int num_pairs = n * (n - 1) / 2;
     std::vector<double> distances(num_pairs + 1);
     distances[0] = 0.0;
 
-    // Berechnung kann parallelisiert werden
+    // Computation can be parallelized
     #pragma omp parallel for schedule(dynamic) default(none) shared(n, points, distances, metric)
     for (int i = 0; i < n; ++i) {
         for (int j = i + 1; j < n; ++j) {
@@ -60,7 +60,7 @@ std::vector<double> get_all_distances(const std::vector<Point>& points, Metric m
         }
     }
 
-    // Duplikate entfernen
+    // Remove duplicates
     std::sort(distances.begin(), distances.end());
     distances.erase(std::unique(distances.begin(), distances.end()), distances.end());
     return distances;

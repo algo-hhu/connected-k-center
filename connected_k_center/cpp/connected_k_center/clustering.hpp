@@ -6,16 +6,17 @@
 namespace ckc {
 
 /**
- * Berechnet die Radius-Membership für einen Pfad.
+ * Computes the radius membership for a path.
  *
- * M[i] enthält alle Zentren-IDs, die Punkt i bei Radius r
- * zusammenhängend (d.h. lückenlos auf dem Pfad) abdecken könnten.
+ * M[i] contains all center IDs that could cover point i at radius r
+ * contiguously (i.e. with no gaps along the path).
  *
- * @param path    Geordneter Pfad als Vektor von Punkt-IDs.
- * @param points  Alle Punkte.
- * @param r       Suchradius.
- * @param n       Gesamtanzahl der Punkte.
- * @return        Membership-Vektor der Größe n.
+ * @param path    Ordered path as a vector of point IDs.
+ * @param points  All points.
+ * @param r       Search radius.
+ * @param n       Total number of points.
+ * @param metric  Distance metric to use.
+ * @return        Membership vector of size n.
  */
     std::vector<std::vector<int>> get_memberships_for_path(
             const std::vector<int>& path,
@@ -26,15 +27,15 @@ namespace ckc {
     );
 
 /**
- * Löst das 1D k-Center-Problem auf einem Pfad mittels Forward-DP.
+ * Solves the 1D k-center problem on a path via forward DP.
  *
- * Findet die minimale Anzahl von Clustern, sodass jeder Punkt im Radius r
- * von seinem Zentrum liegt und das Zentrum im selben Intervall liegt.
+ * Finds the minimum number of clusters such that every point lies within
+ * radius r of its center and the center lies in the same interval.
  *
- * @param path_indices  Geordnete Punkt-IDs des Pfades.
- * @param M             Membership-Vektor aus get_memberships_for_path().
- * @param points        Alle Punkte.
- * @return              ComponentResult (Feasibility, Zentren und Zuordnungen).
+ * @param path_indices  Ordered point IDs of the path.
+ * @param M             Membership vector from get_memberships_for_path().
+ * @param points        All points.
+ * @return              ComponentResult (feasibility, centers and assignments).
  */
     ComponentResult solve_dp_forward(
             const std::vector<int>& path_indices,

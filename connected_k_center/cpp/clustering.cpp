@@ -6,7 +6,7 @@
 
 namespace ckc {
 
-// Schnittmenge zweier SORTIERTER Vektoren
+// Intersection of two SORTED vectors
 static std::vector<int> intersect(const std::vector<int>& x, const std::vector<int>& y) {
     std::vector<int> result;
     std::set_intersection(x.begin(), x.end(), y.begin(), y.end(),
@@ -14,7 +14,7 @@ static std::vector<int> intersect(const std::vector<int>& x, const std::vector<i
     return result;
 }
 
-// Radius-Membership: M[i] = alle Zentren, die Punkt i mit Radius r *zusammenhängend* abdecken könnten
+// Radius membership: M[i] = all centers that could cover point i within radius r *contiguously*
 std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& path, const std::vector<Point>& points, double r, int n, Metric metric) {
     std::vector<std::vector<int>> M(n);
     const int m = static_cast<int>(path.size());
@@ -22,7 +22,7 @@ std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& p
     for (int center_idx = 0; center_idx < m; ++center_idx) {
         const int center_id = path[center_idx];
 
-        // Nach links auf dem Pfad erweitern
+        // Extend to the left along the path
         for (int i = center_idx; i >= 0; --i) {
             const int target_id = path[i];
             if (dist(points[target_id], points[center_id], metric) <= r) {
@@ -32,7 +32,7 @@ std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& p
             }
         }
 
-        // Nach rechts auf dem Pfad erweitern
+        // Extend to the right along the path
         for (int i = center_idx + 1; i < m; ++i) {
             const int target_id = path[i];
             if (dist(points[target_id], points[center_id], metric) <= r) {
@@ -43,7 +43,7 @@ std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& p
         }
     }
 
-    // Sortieren (Voraussetzung für intersect())
+    // Sort (precondition for intersect())
     for (int i = 0; i < n; ++i) {
         std::sort(M[i].begin(), M[i].end());
     }
@@ -52,34 +52,34 @@ std::vector<std::vector<int>> get_memberships_for_path(const std::vector<int>& p
 }
 
 
-// Finde optimales Clustering einer ZHK
+// Find the optimal clustering of a connected component
 ComponentResult solve_dp_forward(const std::vector<int>& path_indices, const std::vector<std::vector<int>>& M, const std::vector<Point>& points) {
     const int n = static_cast<int>(path_indices.size());
 
-    // Initialisierung DP-Matrix
+    // Initialize DP matrix
     std::vector<int> dp_num_centers(n, std::numeric_limits<int>::max());
 
-    // Explizites Backtracking vermeiden, stattdessen direkte Speicherung
+    // Avoid explicit backtracking; store results directly instead
     std::vector<std::vector<int>> partial_centers(n);
     std::vector<std::vector<ClusterAssignment>> partial_assignments(n);
 
-    // Rechte Intervallgrenze
+    // Right interval boundary
     for (int i = 0; i < n; ++i) {
         std::vector<int> current_valid_centers;
 
-        // Rückwärtssuche nach dem (linken) Startpunkt j des 'aktuellen' Clusters
+        // Backward search for the (left) start point j of the 'current' cluster
         for (int j = i; j >= 0; --j) {
             const int u = path_indices[j];
 
             if (j == i) {
                 current_valid_centers = M[u];
             } else {
-                current_valid_centers = intersect(current_valid_centers, M[u]); // Nur Center, die für ALLE gültig
+                current_valid_centers = intersect(current_valid_centers, M[u]); // Only centers valid for ALL
             }
 
-            if (current_valid_centers.empty()) break; // Es ex. kein geeignetes gemeinsames Center
+            if (current_valid_centers.empty()) break; // No suitable common center exists
 
-            // Zentrum muss innerhalb des Intervalls [j...i] liegen
+            // Center must lie within the interval [j...i]
             int chosen_center = -1;
             for (int c : current_valid_centers) {
                 for (int idx = j; idx <= i; ++idx) {
@@ -88,17 +88,17 @@ ComponentResult solve_dp_forward(const std::vector<int>& path_indices, const std
                         break;
                     }
                 }
-                if (chosen_center != -1) break; // Nimm das erste gültige
+                if (chosen_center != -1) break; // Take the first valid one
             }
 
-            // Keines der Center liegt IM intervall
+            // None of the centers lies WITHIN the interval
             if (chosen_center == -1) continue;
 
-            // Gefundenes Cluster mit denen für [0,...,j-1] kombinieren
+            // Combine the found cluster with those for [0,...,j-1]
             const int prev_num_centers = (j == 0) ? 0 : dp_num_centers[j - 1];
             if (prev_num_centers != std::numeric_limits<int>::max()) {
                 if (prev_num_centers + 1 < dp_num_centers[i]) {
-                    dp_num_centers[i] = prev_num_centers + 1; // Interval [j,...,i] hat EIN zusätzliches Cluster
+                    dp_num_centers[i] = prev_num_centers + 1; // Interval [j,...,i] has ONE additional cluster
 
                     if (j > 0) {
                         partial_centers[i]     = partial_centers[j - 1];
@@ -108,7 +108,7 @@ ComponentResult solve_dp_forward(const std::vector<int>& path_indices, const std
                         partial_assignments[i].clear();
                     }
 
-                    // Neues Zentrum und Zuordnungen der Punkte im Intervall in die Map anfügen
+                    // Append the new center and the point assignments in the interval
                     partial_centers[i].push_back(points[chosen_center].id);
                     for (int idx = j; idx <= i; ++idx) {
                         partial_assignments[i].push_back(
@@ -120,7 +120,7 @@ ComponentResult solve_dp_forward(const std::vector<int>& path_indices, const std
         }
     }
 
-    // ComponentResult erstellen, wenn Lösung existiert
+    // Build the ComponentResult if a solution exists
     ComponentResult result;
     if (dp_num_centers[n - 1] == std::numeric_limits<int>::max()) {
         result.feasible    = false;

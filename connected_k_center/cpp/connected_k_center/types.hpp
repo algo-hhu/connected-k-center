@@ -10,19 +10,19 @@ namespace ckc {
 
     enum class Metric { RMSE = 0, Euclidean = 1, Manhattan = 2 };
 
-/// Ein Punkt hat ID + mehrdimensionalen Koordinate
+/// A point has an ID + a multi-dimensional coordinate
     struct Point {
         int id;
         std::vector<double> coords;
     };
 
-/// Zuordnung: Punkt zu einem Clusterzentrum
+/// Assignment: point to a cluster center
     struct ClusterAssignment {
         int point_id;
         int center_id;
     };
 
-/// Ergebnis des k-Center-Algorithmus für EINE Zusammenhangskomponente
+/// Result of the k-center algorithm for ONE connected component
     struct ComponentResult {
         bool feasible;
         int num_centers;
@@ -30,10 +30,10 @@ namespace ckc {
         std::vector<ClusterAssignment> assignments;
     };
 
-/// Adjazenzliste: adj[i] ~> Nachbar-IDs von Punkt i
+/// Adjacency list: adj[i] ~> neighbor IDs of point i
     using AdjacencyList = std::vector<std::vector<int>>;
 
-/// Boost-Graph (ungerichtet)
+/// Boost graph (undirected)
     using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
 
 } // namespace ckc

@@ -4,7 +4,7 @@
 
 namespace ckc {
 
-// Zusammenhangskomponenten als geordnete Pfade extrahieren
+// Extract connected components as ordered paths
 std::vector<std::vector<int>> extract_paths(const AdjacencyList& adj, int n) {
     Graph g(n);
     for (int u = 0; u < n; ++u) {
@@ -18,14 +18,14 @@ std::vector<std::vector<int>> extract_paths(const AdjacencyList& adj, int n) {
     std::vector<std::vector<int>> paths;
     std::vector<bool> visited(n, false);
 
-    // Pfadenden (Grad 0 oder 1) als Startknoten verwenden
+    // Use path endpoints (degree 0 or 1) as start nodes
     for (int i = 0; i < n; ++i) {
         if (!visited[i] && boost::degree(i, g) <= 1) {
             std::vector<int> path;
             int curr = i;
-            int prev = -1; // Vorgängerknoten auf dem Pfad
+            int prev = -1; // Predecessor node on the path
 
-            // Kanten folgen
+            // Follow edges
             while (curr != -1) {
                 path.push_back(curr);
                 visited[curr] = true;
@@ -35,7 +35,7 @@ std::vector<std::vector<int>> extract_paths(const AdjacencyList& adj, int n) {
                 for (auto it = nb_begin; it != nb_end; ++it) {
                     if (static_cast<int>(*it) != prev) {
                         next = static_cast<int>(*it);
-                        break; // Im Pfadgraphen max. 1x solchen Nachbar
+                        break; // In a path graph there is at most one such neighbor
                     }
                 }
 
