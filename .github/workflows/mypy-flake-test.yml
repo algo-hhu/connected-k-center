@@ -5,13 +5,17 @@ on:
     branches:
       - main
     paths:
-      - "flspp/**"
+      - "connected_k_center/**"
       - "tests/**"
+      - "build_extension.py"
+      - "pyproject.toml"
       - "poetry.lock"
   pull_request:
     paths:
-      - "flspp/**"
+      - "connected_k_center/**"
       - "tests/**"
+      - "build_extension.py"
+      - "pyproject.toml"
       - "poetry.lock"
   # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
@@ -21,28 +25,32 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        python-version: ["3.10", "3.11", "3.12"]
+        python-version: ["3.10", "3.11", "3.12", "3.13"]
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v3
+        uses: actions/setup-python@v5
         with:
           python-version: ${{ matrix.python-version }}
 
-      - name: Install poetry
+      # Boost.Graph headers are needed to compile the C++ extension.
+      - name: Install Boost
         run: |
-          curl -sSL https://install.python-poetry.org | POETRY_VERSION=2.3.2 python3 -
-          poetry run pip install -U pip
-          poetry install --with dev
+          sudo apt-get update
+          sudo apt-get install -y libboost-all-dev
+
+      - name: Install poetry
+        run: pipx install poetry==2.3.2
+
+      - name: Install dependencies (builds the C++ extension)
+        run: poetry install --with dev,test
 
       - name: Run MyPy
-        run: |
-          mkdir .mypy_cache
-          poetry run mypy --install-types --non-interactive flspp
+        run: poetry run mypy --install-types --non-interactive connected_k_center
+
       - name: Run Flake8
-        run: |
-          poetry run flake8 flspp/
+        run: poetry run flake8 connected_k_center/ tests/
+
       - name: Run Tests
-        run: |
-          poetry run python -m unittest discover tests -v
+        run: poetry run python -m unittest discover tests -v
