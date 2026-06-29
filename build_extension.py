@@ -1,4 +1,5 @@
-from typing import Any, Dict
+import sys
+from typing import Any, Dict, List
 
 from setuptools import Extension
 from setuptools.command.build_ext import build_ext
@@ -14,33 +15,54 @@ extension = Extension(
         "connected_k_center/cpp/graph_utils.cpp",
     ],
     # "cpp" is the include root so that #include "connected_k_center/<...>.hpp"
-    # resolves to cpp/connected_k_center/. Boost.Graph is expected on the
-    # default include path (e.g. /usr/include on Linux); add its location here
-    # if it lives elsewhere.
+    # resolves to cpp/connected_k_center/. Boost.Graph is header-only and is
+    # expected on the default include path (e.g. /usr/include on Linux). On the
+    # CI wheel builders it is installed per platform (see publish.yml); locate
+    # it via CPPFLAGS/-I if it lives elsewhere.
     include_dirs=["connected_k_center/cpp"],
-    # OpenMP parallelises the pairwise-distance and per-component computations.
-    extra_compile_args=["-fopenmp"],
-    extra_link_args=["-fopenmp"],
 )
 
 # Thank you https://github.com/dstein64/kmeans1d!
 
 
 class BuildExt(build_ext):
-    """A custom build extension for adding -stdlib arguments for clang++."""
+    """Compiler-aware build: select C++17 and OpenMP flags per toolchain.
+
+    OpenMP parallelises the pairwise-distance and per-component computations.
+    The way it is enabled differs by compiler:
+      * GCC / Linux clang: ``-fopenmp`` for both compile and link.
+      * Apple clang (macOS): ``-Xpreprocessor -fopenmp`` and link ``libomp``
+        (its headers/libs come from Homebrew via CPPFLAGS/LDFLAGS).
+      * MSVC (Windows): ``/openmp`` and ``/std:c++17`` (it ignores ``-std=``).
+    """
 
     def build_extensions(self) -> None:
-        # '-std=c++17' is required for the structured bindings / std::filesystem
-        # used by the algorithm. This works across compilers (ignored by MSVC).
+        if self.compiler.compiler_type == "msvc":
+            compile_args = ["/std:c++17", "/openmp", "/EHsc"]
+            link_args: List[str] = []
+        elif sys.platform == "darwin":
+            compile_args = ["-std=c++17", "-Xpreprocessor", "-fopenmp"]
+            link_args = ["-lomp"]
+        else:
+            compile_args = ["-std=c++17", "-fopenmp"]
+            link_args = ["-fopenmp"]
+
         for extension in self.extensions:
-            extension.extra_compile_args.append("-std=c++17")
+            extension.extra_compile_args = (
+                list(extension.extra_compile_args) + compile_args
+            )
+            extension.extra_link_args = (
+                list(extension.extra_link_args) + link_args
+            )
 
         try:
             build_ext.build_extensions(self)
         except CompileError:
             # Workaround Issue #2.
-            # '-stdlib=libc++' is added to `extra_compile_args` and `extra_link_args`
-            # so the code can compile on macOS with Anaconda.
+            # '-stdlib=libc++' is added so the code can compile on macOS with
+            # Anaconda. Irrelevant (and unsupported) for MSVC.
+            if self.compiler.compiler_type == "msvc":
+                raise
             for extension in self.extensions:
                 extension.extra_compile_args.append("-stdlib=libc++")
                 extension.extra_link_args.append("-stdlib=libc++")
