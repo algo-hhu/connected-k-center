@@ -34,6 +34,6 @@ jobs:
         ref: 'main'
         variables: |
           {
-            "PROJECT": "connected_k_center",
+            "PROJECT": "connected-k-center",
             "GIT_HASH": "${{ github.event.pull_request.head.sha || github.sha }}"
           }
