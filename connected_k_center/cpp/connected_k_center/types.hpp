@@ -1,7 +1,6 @@
 #pragma once
 
 #include <vector>
-#include <boost/graph/adjacency_list.hpp>
 
 
 
@@ -32,8 +31,5 @@ namespace ckc {
 
 /// Adjacency list: adj[i] ~> neighbor IDs of point i
     using AdjacencyList = std::vector<std::vector<int>>;
-
-/// Boost graph (undirected)
-    using Graph = boost::adjacency_list<boost::vecS, boost::vecS, boost::undirectedS>;
 
 } // namespace ckc

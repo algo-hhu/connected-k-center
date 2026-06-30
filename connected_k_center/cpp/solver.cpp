@@ -1,6 +1,6 @@
 #include "connected_k_center/solver.hpp"
 #include "connected_k_center/geometry.hpp"
-#include "connected_k_center/graph_utils.hpp"
+#include "connected_k_center/graph.hpp"
 #include "connected_k_center/clustering.hpp"
 
 #include <vector>
@@ -21,7 +21,8 @@ namespace ckc {
         std::vector<double> distances = get_all_distances(points, metric);
 
         /// [Step 1] Build the graph and extract paths (connected components)
-        std::vector<std::vector<int>> paths = extract_paths(adj, n);
+        Graph G(adj);
+        std::vector<std::vector<int>> paths = G.extract_paths();
 
         /// [Step 2] Binary search over distances
         int low_idx  = 0;
@@ -35,8 +36,10 @@ namespace ckc {
             bool possible = true;
             std::vector<ComponentResult> current_results;
 
-            #pragma omp parallel for schedule(dynamic) default(none) shared(n, points, paths, r, possible, total_clusters, current_results, metric)
-            for (const auto& path : paths) {
+            const int num_paths = static_cast<int>(paths.size());
+            #pragma omp parallel for schedule(dynamic) default(none) shared(n, points, paths, r, possible, total_clusters, current_results, metric, num_paths)
+            for (int pi = 0; pi < num_paths; ++pi) {
+                const auto& path = paths[pi];
 
                 auto M = get_memberships_for_path(path, points, r, n, metric);
 

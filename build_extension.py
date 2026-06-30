@@ -12,17 +12,11 @@ extension = Extension(
         "connected_k_center/cpp/solver.cpp",
         "connected_k_center/cpp/clustering.cpp",
         "connected_k_center/cpp/geometry.cpp",
-        "connected_k_center/cpp/graph_utils.cpp",
+        "connected_k_center/cpp/graph.cpp",
     ],
-    # "cpp" is the include root so that #include "connected_k_center/<...>.hpp"
-    # resolves to cpp/connected_k_center/. Boost.Graph is header-only and is
-    # expected on the default include path (e.g. /usr/include on Linux). On the
-    # CI wheel builders it is installed per platform (see publish.yml); locate
-    # it via CPPFLAGS/-I if it lives elsewhere.
+
     include_dirs=["connected_k_center/cpp"],
 )
-
-# Thank you https://github.com/dstein64/kmeans1d!
 
 
 class BuildExt(build_ext):
