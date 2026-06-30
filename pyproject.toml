@@ -9,8 +9,7 @@ packages = [
     { include = "connected_k_center" }
 ]
 include = ["images"]
-# Never ship locally built extension artefacts in the sdist; the wheels are
-# compiled fresh on each platform.
+
 exclude = [
     "connected_k_center/**/*.so",
     "connected_k_center/**/*.pyd",
@@ -60,21 +59,11 @@ build-frontend = "build"
 # Smoke-test every wheel against the bundled instances after it is built.
 test-command = "python -m unittest discover {project}/tests"
 
-[tool.cibuildwheel.linux]
-# manylinux is AlmaLinux-based; Boost.Graph headers come from boost-devel.
-before-all = "yum install -y boost-devel"
-
 [tool.cibuildwheel.macos]
-before-all = "brew install boost libomp"
+# OpenMP for Apple clang comes from the Homebrew libomp package.
+before-all = "brew install libomp"
 
 [tool.cibuildwheel.macos.environment]
-# Point Apple clang at the Homebrew Boost headers and libomp (OpenMP).
-CPPFLAGS = "-I$(brew --prefix libomp)/include -I$(brew --prefix boost)/include"
+# Point Apple clang at the Homebrew libomp (OpenMP) headers and libs.
+CPPFLAGS = "-I$(brew --prefix libomp)/include"
 LDFLAGS = "-L$(brew --prefix libomp)/lib"
-
-[tool.cibuildwheel.windows]
-# vcpkg ships with the GitHub windows runners; install header-only Boost.Graph.
-before-all = "vcpkg install boost-graph:x64-windows"
-
-[tool.cibuildwheel.windows.environment]
-INCLUDE = "C:\\vcpkg\\installed\\x64-windows\\include"
