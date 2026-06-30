@@ -1,6 +1,6 @@
 #include "connected_k_center/solver.hpp"
 #include "connected_k_center/geometry.hpp"
-#include "connected_k_center/graph_utils.hpp"
+#include "connected_k_center/graph.hpp"
 #include "connected_k_center/clustering.hpp"
 
 #include <vector>
@@ -21,7 +21,8 @@ namespace ckc {
         std::vector<double> distances = get_all_distances(points, metric);
 
         /// [Step 1] Build the graph and extract paths (connected components)
-        std::vector<std::vector<int>> paths = extract_paths(adj, n);
+        Graph G(adj);
+        std::vector<std::vector<int>> paths = G.extract_paths();
 
         /// [Step 2] Binary search over distances
         int low_idx  = 0;
