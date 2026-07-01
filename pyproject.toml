@@ -59,6 +59,9 @@ build-frontend = "build"
 # Smoke-test every wheel against the bundled instances after it is built.
 test-command = "python -m unittest discover {project}/tests"
 
+[tool.cibuildwheel.environment]
+OMP_NUM_THREADS = "1"
+
 [tool.cibuildwheel.macos]
 # OpenMP for Apple clang comes from the Homebrew libomp package.
 before-all = "brew install libomp"
@@ -67,3 +70,5 @@ before-all = "brew install libomp"
 # Point Apple clang at the Homebrew libomp (OpenMP) headers and libs.
 CPPFLAGS = "-I$(brew --prefix libomp)/include"
 LDFLAGS = "-L$(brew --prefix libomp)/lib"
+
+
