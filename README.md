@@ -7,3 +7,37 @@ As of now, only an algorithm for path graphs is implemented. A path graph is a g
 
 ### References
 [1] Drexler, L., Eube, J., Luo, K., Reineccius, D., Röglin, H., Schmidt, M., & Wargalla, J. (2024). Connected k-center and k-diameter clustering. Algorithmica, 86(11), 3425-3464.
+
+## Installation
+
+```bash
+pip install connected_k_center
+```
+
+## Usage
+
+The estimator expects a number $k$ of desired clusters and (optionally) a string that specifies the metric. Possible values are "rmse" (default), "euclidean" and "manhattan".
+
+The fit method expects two arguments: A 2d numpy array of dimension $n\times d$ (where n is the number points and d the dimension they live in), and a numpy array of integers, specifying connected component IDs. If there is only one connected component, this argument can be omitted. 
+
+```python
+from connected_k_center import PathCKC
+
+X = [
+    [0., 1.,
+    [1., 0.],
+    [2., 1.],
+    [1., 1.],
+    [2., 0.],
+    [3., 1.],
+]
+
+cids = [0,0,0,0,0,0]
+
+pckc = PathCKC(n_clusters=2, metric="euclidean")
+pckc.fit(X, cids)
+
+print(pckc.optimal_radius_) # 1.4142135623730951
+print(pckc.cluster_centers_indices_) # [1,5]
+print(pckc.labels_) # [1,1,1,1,1,5]
+```
