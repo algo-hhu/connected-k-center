@@ -1,5 +1,6 @@
 import unittest
 from pathlib import Path
+import math
 
 import numpy as np
 
@@ -30,6 +31,7 @@ class TestPathCKCInvariants(unittest.TestCase):
         ("tc6_asymmetric.csv", 1),
         ("tc7_three_groups_exact_k.csv", 3),
         ("tc8_coordinates_independent_path.csv", 3),
+        ("tc9_2d_points.csv", 2),
     ]
 
     def test_invariants(self) -> None:
@@ -162,6 +164,23 @@ class TestPathCKCErrors(unittest.TestCase):
         X, comp = read_instance(DATA_DIR / "tc5_two_components.csv")
         with self.assertRaises(ValueError):
             PathCKC(n_clusters=1).fit(X, component_ids=comp)
+
+    def test_metrics_2d_data(self) -> None:
+        # 2d coordinates, one connected component
+        X, comp = read_instance(DATA_DIR / "tc9_2d_points.csv")
+
+        # Check opt. solution value for RMSE metric
+        model = PathCKC(n_clusters=2, metric="rmse").fit(X, component_ids=comp)
+        self.assertAlmostEqual(model.optimal_radius_, 1)
+
+        # Check opt. solution value for Euclidean metric
+        model = PathCKC(n_clusters=2, metric="euclidean").fit(X, component_ids=comp)
+        self.assertAlmostEqual(model.optimal_radius_, math.sqrt(2))
+
+        # Check opt. solution value for Manhattan metric
+        model = PathCKC(n_clusters=2, metric="manhattan").fit(X, component_ids=comp)
+        self.assertEqual(model.optimal_radius_, 2)
+
 
 
 if __name__ == "__main__":
