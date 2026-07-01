@@ -182,6 +182,5 @@ class TestPathCKCErrors(unittest.TestCase):
         self.assertEqual(model.optimal_radius_, 2)
 
 
-
 if __name__ == "__main__":
     unittest.main()
