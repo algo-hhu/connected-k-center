@@ -41,6 +41,24 @@ print(pckc.optimal_radius_) # 1.4142135623730951
 print(pckc.cluster_centers_indices_) # [1,5]
 print(pckc.labels_) # [1,1,1,1,1,5]
 ```
+
+The package also provides a `read_instance` method, that expects a path to a csv file where each line contains the coordinates of a point, and the order of the points determines the ordering along the path. A new connected component is indicated by a blank line. It returns a tuple (X, cids).
+
+```python
+from connecte_k_center import PathKCK, read_instance
+
+(X, cids) = read_instance("path/to/csv")
+
+pckc = PathCKC(n_clusters=2, metric="euclidean")
+pckc.fit(X, cids)
+
+print(pckc.optimal_radius_) # 1.4142135623730951
+print(pckc.cluster_centers_indices_) # [1,5]
+print(pckc.labels_) # [1,1,1,1,1,5]
+
+```
+
+
 ## Development
 
 Install [poetry](https://python-poetry.org/docs/#installation)
