@@ -4,12 +4,11 @@ version = "0.1"
 description = "Implementations of algorithms for connected k-center on path graphs."
 authors = ["Lukas Drexler <lukas.drexler@hhu.de>", "Julius Mann"]
 readme = "README.md"
-license = "LICENSE"
+license = "MIT"
 packages = [
     { include = "connected_k_center" }
 ]
 include = ["images"]
-
 exclude = [
     "connected_k_center/**/*.so",
     "connected_k_center/**/*.pyd",
@@ -21,14 +20,12 @@ python = "^3.10"
 scikit-learn = "^1.6.1"
 numpy = "^1.26.4"
 
-
 [tool.poetry.group.dev.dependencies]
 black = {extras = ["jupyter"], version = "^24.4.2"}
 pre-commit = "^2.14.0"
 flake8 = "^7.0.0"
 mypy = "^1.10.0"
 tqdm = "^4.66.4"
-
 
 [tool.poetry.group.test.dependencies]
 pandas = "^2.2.2"
@@ -41,29 +38,6 @@ generate-setup-file = true
 requires = ["poetry-core", "setuptools"]
 build-backend = "poetry.core.masonry.api"
 
-[virtualenvs]
-create = true
-in-project = true
-
 [tool.isort]
 profile = "black"
 line_length = 88
-
-[tool.cibuildwheel]
-# Build CPython wheels for the supported interpreters only. PyPy, 32-bit and
-# musl targets are skipped to keep the build matrix small and reliable.
-build = "cp310-* cp311-* cp312-* cp313-*"
-skip = "pp* *-musllinux_* *_i686 *-win32"
-# Use the PEP 517 frontend so poetry-core + build_extension.py drive the build.
-build-frontend = "build"
-# Smoke-test every wheel against the bundled instances after it is built.
-test-command = "python -m unittest discover {project}/tests"
-
-[tool.cibuildwheel.macos]
-# OpenMP for Apple clang comes from the Homebrew libomp package.
-before-all = "brew install libomp"
-
-[tool.cibuildwheel.macos.environment]
-# Point Apple clang at the Homebrew libomp (OpenMP) headers and libs.
-CPPFLAGS = "-I$(brew --prefix libomp)/include"
-LDFLAGS = "-L$(brew --prefix libomp)/lib"
