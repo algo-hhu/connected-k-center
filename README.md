@@ -41,3 +41,35 @@ print(pckc.optimal_radius_) # 1.4142135623730951
 print(pckc.cluster_centers_indices_) # [1,5]
 print(pckc.labels_) # [1,1,1,1,1,5]
 ```
+## Development
+
+Install [poetry](https://python-poetry.org/docs/#installation)
+```bash
+curl -sSL https://install.python-poetry.org | python3 -
+```
+
+Install clang
+```bash
+sudo apt-get install clang
+```
+
+Set clang variables
+```bash
+export CXX=/usr/bin/clang++
+export CC=/usr/bin/clang
+```
+
+Install the package
+```bash
+poetry install
+```
+
+If the installation does not work and you do not see the C++ output, you can build the package to see the stack trace
+```bash
+poetry build
+```
+
+Run the tests
+```bash
+poetry run python -m unittest discover tests -v
+```
