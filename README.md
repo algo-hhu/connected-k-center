@@ -45,7 +45,7 @@ print(pckc.labels_) # [1,1,1,1,1,5]
 The package also provides a `read_instance` method, that expects a path to a csv file where each line contains the coordinates of a point, and the order of the points determines the ordering along the path. A new connected component is indicated by a blank line. It returns a tuple (X, cids).
 
 ```python
-from connecte_k_center import PathKCK, read_instance
+from connected_k_center import PathKCK, read_instance
 
 (X, cids) = read_instance("path/to/csv")
 
