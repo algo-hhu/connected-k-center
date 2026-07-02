@@ -1,3 +1,9 @@
+[![Build Status](https://github.com/algo-hhu/connected-k-center/actions/workflows/mypy-flake-test.yml/badge.svg)](https://github.com/algo-hhu/connected-k-center/actions)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
+[![Supported Python version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![Stable Version](https://img.shields.io/pypi/v/connected-k-center?label=stable)](https://pypi.org/project/connected-k-center/)
+
+
 # Connected Path Graph Clustering
 
 A library for algorithms for the connected k-center problem (as described in [1]). In this problem setting, the input consists of a point set $P$ and a desired number of centers $k$, along with a *connectivity graph* $G = (P,E)$. The goal is to partition $P$ into (at most) $k$ *clusters* $C_1, \ldots, C_k$, such that, for every $i$, the subgraph of $G$ induced by $C_i$ is connected.
