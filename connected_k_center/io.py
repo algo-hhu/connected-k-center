@@ -60,9 +60,10 @@ def read_instance(
     :meth:`PathCKC.fit`: ``X`` has shape ``(n_points, n_features)``
     and ``component_ids`` is the length-``n_points`` path-membership array.
     """
-    # File-like objects expose ``read``; anything else is treated as a path.
-    if hasattr(source, "read"):
-        return _parse_lines(source, source=getattr(source, "name", "<stream>"))
+    # A str/PathLike is a filesystem path we open (and close) ourselves;
+    # anything else is treated as an already-open text stream.
+    if isinstance(source, (str, PathLike)):
+        with open(source, "r") as f:
+            return _parse_lines(f, source=str(source))
 
-    with open(source, "r") as f:
-        return _parse_lines(f, source=str(source))
+    return _parse_lines(source, source=getattr(source, "name", "<stream>"))
