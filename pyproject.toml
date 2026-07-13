@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "connected-k-center"
-version = "0.1"
+version = "0.2.0"
 description = "Implementations of algorithms for connected k-center on path graphs."
 authors = ["Lukas Drexler <lukas.drexler@hhu.de>", "Julius Mann"]
 readme = "README.md"
