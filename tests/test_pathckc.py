@@ -32,7 +32,7 @@ class TestPathCKCInvariants(unittest.TestCase):
         ("tc7_three_groups_exact_k.csv", 3),
         ("tc8_coordinates_independent_path.csv", 3),
         ("tc9_2d_points.csv", 2),
-        ("tc10_three_components_2_d.csv", 3)
+        ("tc10_three_components_2_d.csv", 3),
     ]
 
     def test_invariants(self) -> None:
@@ -52,9 +52,7 @@ class TestPathCKCInvariants(unittest.TestCase):
 
                     # At most n_clusters centers are used.
                     self.assertLessEqual(model.n_clusters_used_, k)
-                    self.assertEqual(
-                        model.n_clusters_used_, len(np.unique(labels))
-                    )
+                    self.assertEqual(model.n_clusters_used_, len(np.unique(labels)))
                     np.testing.assert_array_equal(
                         model.cluster_centers_indices_, np.unique(labels)
                     )
@@ -73,9 +71,7 @@ class TestPathCKCInvariants(unittest.TestCase):
                     # center form a contiguous run along the path.
                     self._assert_clusters_connected(labels, comp)
 
-    def _assert_clusters_connected(
-        self, labels: np.ndarray, comp: np.ndarray
-    ) -> None:
+    def _assert_clusters_connected(self, labels: np.ndarray, comp: np.ndarray) -> None:
         for component in np.unique(comp):
             idx = np.where(comp == component)[0]
             seen: set[int] = set()
@@ -109,9 +105,7 @@ class TestPathCKCKnownResults(unittest.TestCase):
         X, comp = read_instance(DATA_DIR / "tc7_three_groups_exact_k.csv")
         radii = []
         for metric in ("rmse", "euclidean", "manhattan"):
-            model = PathCKC(n_clusters=3, metric=metric).fit(
-                X, component_ids=comp
-            )
+            model = PathCKC(n_clusters=3, metric=metric).fit(X, component_ids=comp)
             radii.append(model.optimal_radius_)
         self.assertEqual(len(set(radii)), 1)
 
@@ -197,6 +191,17 @@ class TestPathCKCErrors(unittest.TestCase):
         # Check opt. solution value for manhattan metric
         model = PathCKC(n_clusters=3, metric="manhattan").fit(X, component_ids=comp)
         self.assertEqual(model.optimal_radius_, 2)
+
+    def test_component_ids_positional(self) -> None:
+        # fit has no sklearn y argument, so component_ids is the second
+        # positional parameter and must not fall back to a single path.
+        X, comp = read_instance(DATA_DIR / "tc10_three_components_2_d.csv")
+
+        model = PathCKC(n_clusters=3, metric="manhattan").fit(X, comp)
+        self.assertEqual(sorted(model.cluster_centers_indices_), [1, 4, 7])
+
+        predicted = PathCKC(n_clusters=3, metric="manhattan").fit_predict(X, comp)
+        np.testing.assert_array_equal(predicted, model.labels_)
 
     def test_centers(self) -> None:
         X, comp = read_instance(DATA_DIR / "tc10_three_components_2_d.csv")

@@ -67,9 +67,7 @@ class TestReadInstanceStream(unittest.TestCase):
         stream = io.StringIO("5,7\n6,6\n\n2,1\n3,1\n")
         X, comp = read_instance(stream)
         self.assertEqual(X.shape, (4, 2))
-        np.testing.assert_array_equal(
-            comp, np.array([0, 0, 1, 1], dtype=np.int32)
-        )
+        np.testing.assert_array_equal(comp, np.array([0, 0, 1, 1], dtype=np.int32))
 
     def test_stream_left_open_for_caller(self) -> None:
         # read_instance must not close a stream it did not open.

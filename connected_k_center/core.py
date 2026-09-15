@@ -1,5 +1,5 @@
 import ctypes
-from typing import Any, Optional, Sequence
+from typing import Optional, Sequence
 
 import numpy as np
 from sklearn.base import BaseEstimator, ClusterMixin
@@ -28,7 +28,10 @@ class PathCKC(ClusterMixin, BaseEstimator):
     This estimator is transductive -- it clusters a fixed, structured input and
     does not learn a reusable predictor -- so it only exposes ``fit`` /
     ``fit_predict`` and does not implement ``predict``, ``transform`` or
-    ``score``.
+    ``score``. It also omits the sklearn ``y`` argument: there are no targets to
+    ignore, and a CV split would reorder ``X`` and destroy the path structure
+    that ``component_ids`` encodes, so the meta-estimator compatibility ``y``
+    buys is not usable here anyway.
     """
 
     def __init__(self, n_clusters: int = 8, metric: str = "rmse"):
@@ -38,7 +41,6 @@ class PathCKC(ClusterMixin, BaseEstimator):
     def fit(
         self,
         X: Sequence[Sequence[float]],
-        y: Any = None,
         component_ids: Optional[Sequence[int]] = None,
     ) -> "PathCKC":
         self._validate_params()
@@ -116,10 +118,9 @@ class PathCKC(ClusterMixin, BaseEstimator):
     def fit_predict(
         self,
         X: Sequence[Sequence[float]],
-        y: Any = None,
         component_ids: Optional[Sequence[int]] = None,
     ) -> np.ndarray:
-        return self.fit(X, component_ids=component_ids).labels_
+        return self.fit(X, component_ids).labels_
 
     def _validate_params(self) -> None:
         if not isinstance(self.n_clusters, (int, np.integer)):
