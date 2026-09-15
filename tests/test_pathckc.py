@@ -32,6 +32,7 @@ class TestPathCKCInvariants(unittest.TestCase):
         ("tc7_three_groups_exact_k.csv", 3),
         ("tc8_coordinates_independent_path.csv", 3),
         ("tc9_2d_points.csv", 2),
+        ("tc10_three_components_2_d.csv", 3)
     ]
 
     def test_invariants(self) -> None:
@@ -181,6 +182,30 @@ class TestPathCKCErrors(unittest.TestCase):
         model = PathCKC(n_clusters=2, metric="manhattan").fit(X, component_ids=comp)
         self.assertEqual(model.optimal_radius_, 2)
 
+
+    def test_metrics_2d_data_multiple_components(self) -> None:
+        #2d coordinates, three connected components
+        X, comp = read_instance(DATA_DIR / "tc10_three_components_2_d.csv")
+
+        #Check opt. solution value for RMSE metric
+        model = PathCKC(n_clusters=3, metric="rmse").fit(X, component_ids=comp)
+        self.assertAlmostEqual(model.optimal_radius_, 1)
+
+        #Check opt. solution value for Euclidean metric
+        model = PathCKC(n_clusters=3, metric="euclidean").fit(X, component_ids=comp)
+        self.assertAlmostEqual(model.optimal_radius_, math.sqrt(2))
+
+        #Check opt. solution value for manhattan metric
+        model = PathCKC(n_clusters=3, metric="manhattan").fit(X, component_ids=comp)
+        self.assertEqual(model.optimal_radius_, 2)
+
+
+    def test_centers(self) -> None:
+        X, comp = read_instance(DATA_DIR / "tc10_three_components_2_d.csv")
+
+        model = PathCKC(n_clusters=3, metric = "manhattan").fit(X, component_ids=comp)
+        self.assertEqual(len(model.cluster_centers_indices_), 3)
+        self.assertEqual(sorted(model.cluster_centers_indices_), sorted([1,4,7]))
 
 if __name__ == "__main__":
     unittest.main()
