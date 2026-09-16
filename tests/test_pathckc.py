@@ -45,26 +45,29 @@ class TestPathCKCInvariants(unittest.TestCase):
 
                     n = X.shape[0]
                     labels = model.labels_
+                    centers = model.cluster_centers_indices_
 
-                    # Every point is assigned to a real center.
+                    # Labels are a dense 0..n_clusters_used_-1 numbering, and
+                    # every one of them indexes a real center.
                     self.assertEqual(labels.shape, (n,))
-                    self.assertTrue(np.all(labels >= 0))
+                    np.testing.assert_array_equal(
+                        np.unique(labels), np.arange(model.n_clusters_used_)
+                    )
 
                     # At most n_clusters centers are used.
                     self.assertLessEqual(model.n_clusters_used_, k)
-                    self.assertEqual(model.n_clusters_used_, len(np.unique(labels)))
-                    np.testing.assert_array_equal(
-                        model.cluster_centers_indices_, np.unique(labels)
-                    )
+                    self.assertEqual(centers.shape, (model.n_clusters_used_,))
 
-                    # A center is assigned to itself.
-                    for c in model.cluster_centers_indices_:
-                        self.assertEqual(labels[c], c)
+                    # Centers are point indices into X, and each one belongs to
+                    # its own cluster.
+                    self.assertTrue(np.all((centers >= 0) & (centers < n)))
+                    for j, c in enumerate(centers):
+                        self.assertEqual(labels[c], j)
 
                     # k-center property: every point is within the radius.
                     self.assertGreaterEqual(model.optimal_radius_, 0.0)
                     for i in range(n):
-                        d = _dist(X[i], X[labels[i]], metric)
+                        d = _dist(X[i], X[centers[labels[i]]], metric)
                         self.assertLessEqual(d, model.optimal_radius_ + 1e-9)
 
                     # Connectivity: within a component, all points sharing a

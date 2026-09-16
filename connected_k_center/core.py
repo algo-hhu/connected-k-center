@@ -32,6 +32,18 @@ class PathCKC(ClusterMixin, BaseEstimator):
     ignore, and a CV split would reorder ``X`` and destroy the path structure
     that ``component_ids`` encodes, so the meta-estimator compatibility ``y``
     buys is not usable here anyway.
+
+    Attributes
+    ----------
+    labels_ : ndarray of shape (n_samples,)
+        Cluster index of each point, in ``0..n_clusters_used_ - 1``.
+    cluster_centers_indices_ : ndarray of shape (n_clusters_used_,)
+        Index into ``X`` of each cluster's center, so the center of point ``i``
+        is ``X[cluster_centers_indices_[labels_[i]]]``.
+    n_clusters_used_ : int
+        Number of centers in the solution; at most ``n_clusters``.
+    optimal_radius_ : float
+        Smallest radius admitting a connected clustering with that many centers.
     """
 
     def __init__(self, n_clusters: int = 8, metric: str = "rmse"):
@@ -108,9 +120,26 @@ class PathCKC(ClusterMixin, BaseEstimator):
                 f"{self.n_clusters}."
             )
 
+        # The C++ side pre-fills the label array with -1 and overwrites it per
+        # assignment, so a leftover -1 means a point was never assigned. The
+        # relabelling below would silently turn that sentinel into cluster 0,
+        # so it has to be caught here.
+        if np.any(labels < 0):
+            raise RuntimeError(
+                f"{int(np.sum(labels < 0))} of {n_samples} points were left "
+                f"unassigned by the solver."
+            )
+
+        # The solver labels each point with the *point index* of its center.
+        # Expose that as cluster_centers_indices_ and renumber labels_ to
+        # 0..n_clusters_used_-1, following sklearn's AffinityPropagation:
+        # the center of point i is X[cluster_centers_indices_[labels_[i]]].
+        center_indices, compact_labels = np.unique(labels, return_inverse=True)
+
         self.optimal_radius_ = radius
-        self.labels_ = labels
-        self.cluster_centers_indices_ = np.unique(labels)
+        self.labels_ = compact_labels.astype(np.int32, copy=False)
+        self.cluster_centers_indices_ = center_indices
+        self.cluster_centers_ = X[center_indices]
         self.n_clusters_used_ = c_num_centers.value
 
         return self
