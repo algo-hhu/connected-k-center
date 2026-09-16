@@ -139,7 +139,7 @@ class PathCKC(ClusterMixin, BaseEstimator):
         self.optimal_radius_ = radius
         self.labels_ = compact_labels.astype(np.int32, copy=False)
         self.cluster_centers_indices_ = center_indices
-        self.cluster_centers_ = X[center_indices]
+        self.cluster_centers_ = _X[center_indices]
         self.n_clusters_used_ = c_num_centers.value
 
         return self
