@@ -1,6 +1,6 @@
 [![Build Status](https://github.com/algo-hhu/connected-k-center/actions/workflows/mypy-flake-test.yml/badge.svg)](https://github.com/algo-hhu/connected-k-center/actions)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
-[![Supported Python version](https://img.shields.io/badge/python-3.10+-blue.svg)](https://www.python.org/downloads/release/python-3100/)
+[![Supported Python version](https://img.shields.io/badge/python-3.12+-blue.svg)](https://www.python.org/downloads/release/python-3120/)
 [![Stable Version](https://img.shields.io/pypi/v/connected-k-center?label=stable)](https://pypi.org/project/connected-k-center/)
 
 

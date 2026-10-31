@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "connected-k-center"
-version = "0.4.0"
+version = "0.4.1"
 description = "Implementations of algorithms for connected k-center on path graphs."
 authors = ["Lukas Drexler <lukas.drexler@hhu.de>", "Julius Mann"]
 readme = "README.md"
@@ -16,19 +16,19 @@ exclude = [
 ]
 
 [tool.poetry.dependencies]
-python = "^3.10"
-scikit-learn = "^1.6.1"
-numpy = "^1.26.4"
+python = "^3.12"
+numpy = "^2.4.0"
+scikit-learn = "^1.9.1"
 
 [tool.poetry.group.dev.dependencies]
-black = {extras = ["jupyter"], version = "^26.3.1"}
+black = {extras = ["jupyter"], version = "^26.10.1"}
 pre-commit = "^2.14.0"
 flake8 = "^7.0.0"
 mypy = "^1.10.0"
 tqdm = "^4.66.4"
 
 [tool.poetry.group.test.dependencies]
-pandas = "^2.2.2"
+pandas = "^3.1.0"
 
 [tool.poetry.build]
 script = "build_extension.py"
