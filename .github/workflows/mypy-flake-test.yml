@@ -1,4 +1,9 @@
+---
+
 name: Q&A and Tests
+
+permissions:
+  contents: read
 
 on:
   push:
@@ -26,11 +31,13 @@ jobs:
     strategy:
       matrix:
         python-version: ["3.12", "3.13", "3.14", "3.15"]
+
     steps:
-      - uses: actions/checkout@v4
+      - name: Checkout repository
+        uses: actions/checkout@v7
 
       - name: Set up Python ${{ matrix.python-version }}
-        uses: actions/setup-python@v5
+        uses: actions/setup-python@v7
         with:
           python-version: ${{ matrix.python-version }}
 
@@ -47,7 +54,9 @@ jobs:
         run: poetry install --with dev,test
 
       - name: Run MyPy
-        run: poetry run mypy --install-types --non-interactive connected_k_center
+        run: >
+          poetry run mypy --install-types
+          --non-interactive connected_k_center
 
       - name: Run Flake8
         run: poetry run flake8 connected_k_center/ tests/
