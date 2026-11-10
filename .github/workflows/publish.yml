@@ -1,6 +1,6 @@
 ---
 
-name: Upload to PyPI
+name: Publish to PyPI
 
 on:
   release:

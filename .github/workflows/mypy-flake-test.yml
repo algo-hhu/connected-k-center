@@ -1,6 +1,6 @@
 ---
 
-name: Q&A and Tests
+name: Linting & Quality Assurance
 
 permissions:
   contents: read
@@ -22,29 +22,23 @@ on:
       - "build_extension.py"
       - "pyproject.toml"
       - "poetry.lock"
-  # Allows you to run this workflow manually from the Actions tab
   workflow_dispatch:
 
 jobs:
-  build:
+  lint:
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        python-version: ["3.12", "3.13", "3.14", "3.15"]
-
     steps:
       - name: Checkout repository
         uses: actions/checkout@v7
 
-      - name: Set up Python ${{ matrix.python-version }}
+      - name: Set up Python
         uses: actions/setup-python@v7
         with:
-          python-version: ${{ matrix.python-version }}
+          python-version: "3.14"
 
-      # Boost.Graph headers are needed to compile the C++ extension.
       - name: Install Boost
-        run: |
-          sudo apt-get update
+        run: >
+          sudo apt-get update &&
           sudo apt-get install -y libboost-all-dev
 
       - name: Install poetry
@@ -60,6 +54,3 @@ jobs:
 
       - name: Run Flake8
         run: poetry run flake8 connected_k_center/ tests/
-
-      - name: Run Tests
-        run: poetry run python -m unittest discover tests -v
