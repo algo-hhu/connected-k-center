@@ -67,7 +67,7 @@ jobs:
       - name: Install Boost (macOS)
         if: runner.os == 'macOS'
         run: |
-          brew install boost
+          brew install boost libomp
           echo "CPLUS_INCLUDE_PATH=/opt/homebrew/include" >> $GITHUB_ENV
           echo "LIBRARY_PATH=/opt/homebrew/lib" >> $GITHUB_ENV
 
@@ -76,13 +76,13 @@ jobs:
         if: runner.os == 'Windows'
         shell: pwsh
         run: |
-          $boostVersion = "1.84.0"
-          $boostVersionUnder = $boostVersion -replace '\.', '_'
+          $boostV = "1.92.0"
+          $boostVersionUnder = $boostV -replace '\.', '_'
 
-          $baseUrl = "https://sourceforge.net/projects/boost/files/boost"
-          $url = "$baseUrl/$boostVersion/boost_$boostVersionUnder.zip/download"
+          $baseUrl = "https://archives.boost.io/release/$boostV/source-nodocs/"
+          $url = "$baseUrl/boost_$boostVersionUnder.zip/download"
 
-          Write-Host "Downloading Boost $boostVersion..."
+          Write-Host "Downloading Boost $boostV..."
           Invoke-WebRequest -Uri $url -OutFile "boost.zip"
 
           Write-Host "Extracting Boost..."
