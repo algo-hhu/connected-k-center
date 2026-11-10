@@ -98,7 +98,7 @@ jobs:
         run: pipx install poetry==2.5.1
 
       - name: Install dependencies (builds the C++ extension)
-        run: poetry -vvv install --with test
+        run: poetry install --with test
 
       - name: Run Tests
         run: poetry run python -m unittest discover tests -v
