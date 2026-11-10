@@ -79,8 +79,8 @@ jobs:
           $boostV = "1.92.0"
           $boostVersionUnder = $boostV -replace '\.', '_'
 
-          $baseUrl = "https://archives.boost.io/release/$boostV/source-nodocs/"
-          $url = "$baseUrl/boost_$boostVersionUnder.zip/download"
+          $baseUrl = "https://archives.boost.io/release/$boostV/source-nodocs"
+          $url = "$baseUrl/boost_$boostVersionUnder.zip"
 
           Write-Host "Downloading Boost $boostV..."
           Invoke-WebRequest -Uri $url -OutFile "boost.zip"
