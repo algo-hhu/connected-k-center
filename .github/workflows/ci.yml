@@ -70,8 +70,8 @@ jobs:
           brew install boost libomp
           echo "CPLUS_INCLUDE_PATH=/opt/homebrew/include" >> $GITHUB_ENV
           echo "LIBRARY_PATH=/opt/homebrew/lib" >> $GITHUB_ENV
-          export LDFLAGS=-L/opt/homebrew/opt/libomp/lib
-          export CPPFLAGS=-I/opt/homebrew/opt/libomp/include
+          echo "LDFLAGS=-L/opt/homebrew/opt/libomp/lib" >> $GITHUB_ENV
+          echo "CPPFLAGS=-I/opt/homebrew/opt/libomp/include" >> $GITHUB_ENV
 
 
       # --- Boost für Windows ---
