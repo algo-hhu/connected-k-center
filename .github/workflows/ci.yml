@@ -68,6 +68,8 @@ jobs:
         if: runner.os == 'macOS'
         run: |
           brew install boost
+          echo "CPLUS_INCLUDE_PATH=/opt/homebrew/include" >> $GITHUB_ENV
+          echo "LIBRARY_PATH=/opt/homebrew/lib" >> $GITHUB_ENV
 
       # --- Boost für Windows ---
       - name: Install Boost (Windows)
@@ -93,7 +95,7 @@ jobs:
         run: pipx install poetry==2.5.1
 
       - name: Install dependencies (builds the C++ extension)
-        run: poetry install --with test
+        run: poetry -vvv install --with test
 
       - name: Run Tests
         run: poetry run python -m unittest discover tests -v
